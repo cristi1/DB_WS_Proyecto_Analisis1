@@ -1,6 +1,10 @@
+#python tiene una API de PyUnit para pruebas unitarias
+import unittest
 import json
+import WBSVTest
 import requests
 import status
+
 
 from flask import Flask, request, render_template
 from flask.ext.api import FlaskAPI, status, exceptions
@@ -54,17 +58,17 @@ def log_professor():
         json_result = {'mensaje' : 'en constuccion'}, status.HTTP_202_ACCEPTED
         return json.dumps(json_result)
 
-@app.route('/user_professor/exist', methods=['POST', 'GET'])
-def log_professor():
-    if request.method == 'POST': #verificacion que el usuario exista
-        json_professor = request.json
-        json_result = json_professor
-        professor_user = json_professor['usuario']
-        professor_pass = json_professor['contrasenia']
-        search_professor(professor_user)
-    else:
-        json_result = {'mensaje' : 'en constuccion'}, status.HTTP_202_ACCEPTED
-        return json.dumps(json_result)
+#@app.route('/user_professor/exist', methods=['POST', 'GET'])
+#def log_professor():
+    #if request.method == 'POST': #verificacion que el usuario exista
+        #json_professor = request.json
+        #json_result = json_professor
+        #professor_user = json_professor['usuario']
+        #professor_pass = json_professor['contrasenia']
+        #search_professor(professor_user)
+    #else:
+        #json_result = {'mensaje' : 'en constuccion'}, status.HTTP_202_ACCEPTED
+        #return json.dumps(json_result)
 
 @app.route('/test_professor', methods=['GET'])
 def test_professor():
@@ -85,7 +89,7 @@ def insert_professor(pn,pu,ps):
                 data = cursor.fetchall()
                 if len(data) is 0:
                     conn.commit()
-                    return json.dumps({'mensaje' : 'usuario creado con exito'}), status.HTTP_201_CREATED
+                    return json.dumps({'mensaje' : 'usuario creado con exito'})#, status.HTTP_201_CREATED
                 else:
                     professor_result = {'mensaje' : 'Error en la creacion del usuario'}
                     return json.dumps(professor_result), status.HTTP_400_BAD_REQUEST
@@ -109,9 +113,11 @@ def search_professor(pu):
         if professor_user != "":
             conn = mysql.connect()
             cursor = conn.cursor()
-            cursor.callproc('sp_existUsuario',(professor_user))
-            data = cursor.fetchall()
-            if len(data) is 0:
+            #cursor.callproc('sp_existUsuario', (professor_user))
+            cursor.execute("CALL sp_ExistUsuario('"+  professor_user+ "')")
+            data = cursor.fetchone()
+            #data = cursor.fetchall()
+            if len(data) is 1:
                 conn.commit()
                 return True
             else:
@@ -127,7 +133,7 @@ def search_professor(pu):
         cursor.close()
         conn.close()
 
-def login_professor(pu,ps):
+def login_professor(pu, ps):
     professor_user = pu
     professor_pass = ps
     professor_result = None
@@ -137,9 +143,9 @@ def login_professor(pu,ps):
             cursor = conn.cursor()
             cursor.callproc('sp_login',(professor_user,professor_pass))
             data = cursor.fetchall()
-            if len(data) is 0:
+            if len(data) is 1:
                 conn.commit()
-                return json.dumps({'mensaje' : 'usuario existente'}), status.HTTP_200_CREATED
+                return json.dumps({'mensaje' : 'usuario existente'})#, status.HTTP_200_CREATED
             else:
                 professor_result = {'mensaje' : 'Error, no se encontro el usuario'}
                 return json.dumps(professor_result), status.HTTP_400_BAD_REQUEST
@@ -147,6 +153,7 @@ def login_professor(pu,ps):
             professor_result = {'mensaje' : 'Error, no hay informacion de referencia'}
             return json.dumps(professor_result), status.HTTP_400_BAD_REQUEST
     except Exception as e:
+            print('mi error: ' + str(e))
             professor_result = {'mensaje' : str(e)}
             return json.dumps(professor_result), status.HTTP_400_BAD_REQUEST
     finally:
@@ -154,5 +161,24 @@ def login_professor(pu,ps):
         conn.close()
 
 
+class WBSVTTest(unittest.TestCase):
+
+    def test_login_professor(self):
+        professor_user = 'Felix10'
+        professor_pass = '87632'
+        self.assertEqual("{\"mensaje\": \"usuario existente\"}", login_professor(professor_user, professor_pass))
+
+    def test_search_professor(self):
+        professor_user = 'Felix10'
+        self.assertEquals(True, search_professor(professor_user))
+
+    def test_insert_professor(self):
+        professor_name = 'Auxiliar3'
+        professor_user = 'AuxiliarPrueba3'
+        professor_pass = '905670'
+        self.assertEquals("{\"mensaje\": \"usuario creado con exito\"}", insert_professor(professor_name,professor_user,professor_pass))
+
+
 if __name__ == '__main__':
-    app.run()
+    unittest.main()
+    app.run(host='192.168.80.177', debug=True)
