@@ -26,7 +26,7 @@ def hello_world():
 
 
 @app.route('/user_professor/new', methods=['POST', 'PATCH', 'DELETE', 'GET'])
-def professor_methods():
+def professor_new():
     if request.method == 'POST': #creamos el usuario profesor
         json_professor = request.json
         json_result = json_professor
@@ -47,28 +47,28 @@ def professor_methods():
         return json.dumps(json_result), status.HTTP_201_CREATED
 
 @app.route('/user_professor/list', methods=['POST', 'GET'])
-def log_professor():
+def professor_log():
     if request.method == 'POST': #login
         json_professor = request.json
         json_result = json_professor
         professor_user = json_professor['usuario']
         professor_pass = json_professor['contrasenia']
-        login_professor(professor_user,professor_pass)
+        return login_professor(professor_user,professor_pass)
     else:
         json_result = {'mensaje' : 'en constuccion'}, status.HTTP_202_ACCEPTED
         return json.dumps(json_result)
 
-#@app.route('/user_professor/exist', methods=['POST', 'GET'])
-#def log_professor():
-    #if request.method == 'POST': #verificacion que el usuario exista
-        #json_professor = request.json
-        #json_result = json_professor
-        #professor_user = json_professor['usuario']
-        #professor_pass = json_professor['contrasenia']
-        #search_professor(professor_user)
-    #else:
-        #json_result = {'mensaje' : 'en constuccion'}, status.HTTP_202_ACCEPTED
-        #return json.dumps(json_result)
+@app.route('/user_professor/exist', methods=['POST', 'GET'])
+def professor_search():
+    if request.method == 'POST': #verificacion que el usuario exista
+        json_professor = request.json
+        json_result = json_professor
+        professor_user = json_professor['usuario']
+        professor_pass = json_professor['contrasenia']
+        search_professor(professor_user)
+    else:
+        json_result = {'mensaje' : 'en constuccion'}, status.HTTP_202_ACCEPTED
+        return json.dumps(json_result)
 
 @app.route('/test_professor', methods=['GET'])
 def test_professor():
@@ -148,14 +148,14 @@ def login_professor(pu, ps):
                 return json.dumps({'mensaje' : 'usuario existente'})#, status.HTTP_200_CREATED
             else:
                 professor_result = {'mensaje' : 'Error, no se encontro el usuario'}
-                return json.dumps(professor_result), status.HTTP_400_BAD_REQUEST
+                return json.dumps(professor_result)#, status.HTTP_400_BAD_REQUEST
         else:
             professor_result = {'mensaje' : 'Error, no hay informacion de referencia'}
-            return json.dumps(professor_result), status.HTTP_400_BAD_REQUEST
+            return json.dumps(professor_result)#, status.HTTP_400_BAD_REQUEST
     except Exception as e:
             print('mi error: ' + str(e))
             professor_result = {'mensaje' : str(e)}
-            return json.dumps(professor_result), status.HTTP_400_BAD_REQUEST
+            return json.dumps(professor_result)#, status.HTTP_400_BAD_REQUEST
     finally:
         cursor.close()
         conn.close()
@@ -180,5 +180,5 @@ class WBSVTTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
-    app.run(host='192.168.80.177', debug=True)
+    #unittest.main()
+    app.run(host='192.168.1.16', debug=True)
