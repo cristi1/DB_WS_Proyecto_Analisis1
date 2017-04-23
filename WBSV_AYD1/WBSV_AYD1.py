@@ -1,4 +1,4 @@
-#python tiene una API de PyUnit para pruebas unitarias
+__author__ = 'crist'
 
 import Professor
 
@@ -6,7 +6,7 @@ import unittest
 import json
 
 from flask import Flask, request, render_template
-from flask.ext.api import FlaskAPI, status, exceptions
+from flask.ext.api import  status
 
 app = Flask(__name__)
 
@@ -54,5 +54,5 @@ def test_professor():
 
 
 if __name__ == '__main__':
-    unittest.main()
-    app.run(host='192.168.1.16', debug=True)
+    #unittest.main()
+    app.run(debug=True)
