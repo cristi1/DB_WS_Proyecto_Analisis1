@@ -6,7 +6,7 @@ import unittest
 import json
 
 from flask import Flask, request, render_template
-from flask.ext.api import  status
+from flask.ext.api import status
 
 app = Flask(__name__)
 
@@ -17,10 +17,10 @@ def hello_world():
 
 @app.route('/user_professor/new', methods=['POST', 'PATCH', 'DELETE', 'GET'])
 def professor_new():
-    if request.method == 'POST': #creamos el usuario profesor
+    if request.method == 'POST':  # creamos el usuario profesor
         professor_json = request.json
         json_result = professor_json
-        professor_object = Professor.Professor(professor_json['usuario'], professor_json['contrasenia'],professor_json['nombre'],  professor_json['email'])
+        professor_object = Professor.Professor(professor_json['usuario'], professor_json['contrasenia'], professor_json['nombre'],  professor_json['email'])
         return professor_object.insert_professor()
     else: # mostrar informacion de profesor
         json_result = {'mensaje' : 'en construccion'}
@@ -28,9 +28,9 @@ def professor_new():
 
 @app.route('/user_professor/list', methods=['POST', 'GET'])
 def professor_log():
-    if request.method == 'POST': #login
+    if request.method == 'POST':  # login
         professor_json = request.json
-        professor_object = Professor.Professor(professor_json['usuario'],professor_json['contrasenia'],"","")
+        professor_object = Professor.Professor(professor_json['usuario'], professor_json['contrasenia'], "", "")
         return professor_object.login_professor()
     else:
         json_result = {'mensaje' : 'en constuccion'}, status.HTTP_202_ACCEPTED
@@ -38,9 +38,9 @@ def professor_log():
 
 @app.route('/user_professor/exist', methods=['POST', 'GET'])
 def professor_search():
-    if request.method == 'POST': #verificacion que el usuario exista
+    if request.method == 'POST':  # verificacion que el usuario exista
         professor_json = request.json
-        professor_object = Professor.Professor("","","","","")
+        professor_object = Professor.Professor("", "", "", "", "")
         return professor_object.search_professor(professor_json['usuario'])
     else:
         json_result = {'mensaje' : 'en constuccion'}, status.HTTP_202_ACCEPTED
@@ -55,4 +55,4 @@ def test_professor():
 
 if __name__ == '__main__':
     #unittest.main()
-    app.run('192.168.1.4',debug=True)
+    app.run('192.168.1.4', debug=True)
