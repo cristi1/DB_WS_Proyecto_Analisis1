@@ -55,4 +55,4 @@ def test_professor():
 
 if __name__ == '__main__':
     #unittest.main()
-    app.run('192.168.1.4', debug=True)
+    app.run('172.20.10.4', debug=True)
