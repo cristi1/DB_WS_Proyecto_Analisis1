@@ -1,4 +1,4 @@
-__author__ = 'crist'
+__author__ = 'cristian'
 
 import WBSV_AYD1
 from flask.ext.mysql import MySQL

@@ -1,9 +1,7 @@
-__author__ = 'crist'
+__author__ = 'cristian'
 
 import BD_Connect
-
 import json
-
 
 class Professor:
     __professor_user = None
@@ -105,6 +103,35 @@ class Professor:
             print('mi error: ' + str(e))
             professor_result = {'mensaje': str(e)}
             return json.dumps(professor_result)
+        finally:
+            cursor.close()
+            conn.close()
+
+    def list_professor_class(self,pc):
+        class_result = None
+        professor_id = pc
+        conn = None
+        cursor = None
+        try:
+            if self.__professor_user != "" and professor_id != "" :
+                mysql_aux = BD_Connect.BD()
+                mysql = mysql_aux.get_mysql()
+                conn = mysql.connect()
+                cursor = conn.cursor()
+                cursor.execute("call sp_listCurso (" + professor_id + ");")
+                data = cursor.fetchall()
+                if len(data) is 0:
+                    #conn.commit()
+                    return json.dumps({'mensaje': 'curso creado con exito'})
+                else:
+                    class_result = {'mensaje': 'Error en la creacion del curso'}
+                    return json.dumps(class_result)
+            else:
+                class_result = {'mensaje': 'Error en la creacion del curso'}
+                return json.dumps(class_result)
+        except Exception as e:
+            class_result = {'mensaje': str(e)}
+            return json.dumps(class_result)
         finally:
             cursor.close()
             conn.close()
