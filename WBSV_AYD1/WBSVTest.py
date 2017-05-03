@@ -3,6 +3,7 @@ __author__ = 'cristi'
 
 # API de PyUnit para pruebas unitarias
 import Professor
+import Class
 
 import unittest
 
@@ -11,6 +12,7 @@ class WBSVTTest(unittest.TestCase):
 
     def setUp(self):
         self.professor = Professor.Professor('Felix10', '87632', 'Garcia Felix', 'felix@gmail.com')
+
 
     def test_login_professor(self):
         self.assertEqual("{\"mensaje\": \"usuario existente\"}", self.professor.login_professor())

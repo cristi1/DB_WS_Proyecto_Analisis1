@@ -3,13 +3,14 @@ __author__ = 'cristian'
 import BD_Connect
 import json
 
-class Professor:
+class Class:
     __class_name = None
     __class_cod_professor = None
 
     def __init__(self, cn, cp):
         self.__class_name = cn
         self.__class_cod_professor = cp
+        self.__class_cod_class = ''
 
     def insert_class(self):
         class_result = self.search_class(self.__class_name)  # Verificar si el usuario ya existia
@@ -22,7 +23,7 @@ class Professor:
                     mysql = mysql_aux.get_mysql()
                     conn = mysql.connect()
                     cursor = conn.cursor()
-                    cursor.callproc('sp_insertarCurso', (self.__class_name))
+                    cursor.callproc('sp_insertarCurso', (self.__class_name, self.__class_cod_professor, self.__class_cod_class))
                     data = cursor.fetchall()
                     if len(data) is 0:
                         conn.commit()
@@ -43,7 +44,7 @@ class Professor:
             class_result = {'mensaje': 'Error, El curso ya existe'}
             return json.dumps(class_result)
 
-    def search_curso(self, cn):
+    def search_class(self, cn):
         class_name =  cn
         class_result = None
         conn = None
