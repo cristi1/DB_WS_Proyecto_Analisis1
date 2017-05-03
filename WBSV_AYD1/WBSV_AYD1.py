@@ -1,6 +1,7 @@
-__author__ = 'crist'
+__author__ = 'cristian'
 
 import Professor
+import WBSVTest
 
 import unittest
 import json
@@ -13,7 +14,9 @@ app = Flask(__name__)
 
 @app.route('/')
 def hello_world():
-    return 'Hello World!'
+    # return 'Hello World!'
+    professor_object = Professor.Professor('Azurdia90', '1234', 'Azurdia Cristian', 'cristian@gmail.com')
+    return professor_object.list_professor_class(5)
 
 @app.route('/user_professor/new', methods=['POST', 'PATCH', 'DELETE', 'GET'])
 def professor_new():
@@ -54,5 +57,5 @@ def test_professor():
 
 
 if __name__ == '__main__':
-    #unittest.main()
     app.run('172.20.10.4', debug=True)
+    #app.run(debug = True)
